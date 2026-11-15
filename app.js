@@ -166,7 +166,7 @@
         <div class="card book" style="padding:34px 50px;display:flex;flex-direction:column;justify-content:center;position:relative;min-height:0">
           <div style="position:absolute;top:16px;left:50px;font:800 15px var(--display);letter-spacing:3px;color:#9E6427">МҰРАТ МӨҢКЕҰЛЫ · «САРЫАРҚА» · ${S.rd.i + 1}-ШУМАҚ</div>
           ${st.lines.map((l, k) => `<div class="vline" style="animation-delay:${k * 0.25}s">${esc(l)}</div>`).join('')}
-          <div style="position:absolute;bottom:14px;right:28px;font:800 18px var(--display);color:#9E6427">${st.p}-бет</div></div>
+          <div style="position:absolute;bottom:14px;right:28px;font:800 18px var(--display);color:#9E6427">${st.p}-бет</div><button class="btn sec" id="rdPlay" style="position:absolute;bottom:12px;left:46px;padding:10px 18px;font-size:18px">🔊 Үлгі: мәнерлеп оқу</button><audio id="rdAu" src="media/oqu/${S.rd.i + 1}.mp3" preload="auto"></audio></div>
         <div style="display:grid;grid-template-columns:.8fr 1.2fr;gap:12px">
           <div class="card" style="padding:14px 18px;background:#FFF4DE;border:2px solid #E7B66A"><div style="font:800 15px var(--display);letter-spacing:2px;color:#A8651A">📚 СӨЗМАРЖАН</div>${st.words.map(([w, d]) => `<div style="font-size:20px;margin-top:6px;line-height:1.3"><b>${esc(w)}</b> — ${esc(d)}</div>`).join('')}</div>
           <div class="card" style="padding:14px 18px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;gap:10px;align-items:flex-start"><span class="chip" style="background:${st.lvl === 'Білу' ? '#DFF0F3' : '#FBEFD9'}">${st.lvl === 'Білу' ? '① Білу' : '② Түсіну'}</span><div style="font:800 23px/1.25 var(--display)">${esc(st.q)}</div></div>
@@ -376,6 +376,7 @@
     const go = (i) => { S.rd.i = Math.max(0, Math.min(LD.stanzas.length - 1, i)); S.rd.key = false; redraw(); };
     $$('.rdt').forEach((b) => b.onclick = () => go(+b.dataset.i));
     $('#spin').onclick = () => doSpin($('#pick'), (p) => { S.rd.pick = p; });
+    const au = $('#rdAu'), pb = $('#rdPlay'); pb.onclick = () => { if (au.paused) { au.currentTime = 0; au.play(); pb.textContent = '⏸ Тоқтату'; } else { au.pause(); pb.textContent = '🔊 Үлгі: мәнерлеп оқу'; } }; au.onended = () => { pb.textContent = '🔊 Үлгі: мәнерлеп оқу'; };
     $('#rdKey').onclick = () => { S.rd.key = !S.rd.key; $('#rdA').style.display = S.rd.key ? 'block' : 'none'; };
     $('#rdNext').onclick = () => { S.rd.done[S.rd.i] = 1; if (S.rd.i < LD.stanzas.length - 1) { S.rd.pick = null; go(S.rd.i + 1); } else { banner('✓ Жыр тізбегі аяқталды · 📒 Хатшылар K2 сұрақ ұпайын қойсын', 5000); redraw(); } };
     const ok = $('#rdOk'); if (ok) ok.onclick = () => { const p = S.rd.pick; if (!p || p.anon) return; bScore(p, 'K2_0', 1); GT.chime(); banner('🎙️ ' + p.name + ': +1 (K2)'); redraw(); };
