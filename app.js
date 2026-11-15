@@ -119,7 +119,7 @@
       <div style="font:800 18px var(--display);letter-spacing:2px;color:var(--amber)">🎯 БҮГІН САБАҚТА</div>
       ${LD.goals.map((g, i) => `<div style="display:flex;gap:12px;align-items:center;font-size:22px;font-weight:700;line-height:1.25"><b style="flex:none;width:44px;height:44px;border-radius:14px;background:${grp(i).c};color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px">${['📖', '🔍', '⚖️'][i]}</b>${esc(g)}</div>`).join('')}
       <div style="font:800 18px var(--display);letter-spacing:2px;color:var(--amber);margin-top:8px">КӨҢІЛ-КҮЙІМ</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${[['☀️', 'Шабыттымын', '#2E8B57'], ['🌤️', 'Жақсы', '#2F7E92'], ['🤔', 'Ойланып тұрмын', '#D9962B'], ['🌧️', 'Шаршадым', '#8A5A9E']].map(([e, t, c], i) => `<button class="mood" data-i="${i}" style="border:2px solid ${c}55;background:#fff;border-radius:20px;padding:8px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px"><span style="font-size:44px">${e}</span><b style="font-size:19px;color:${c};flex:1;text-align:left">${t}</b><b style="font:900 28px var(--display);color:${c}" data-c="${i}">${S.mood[i] || 0}</b></button>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${LD.moods.map(({ icon: e, t, c }, i) => `<button class="mood" data-i="${i}" style="border:2px solid ${c}55;background:#fff;border-radius:20px;padding:8px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px"><span style="font-size:44px">${e}</span><b style="font-size:18px;line-height:1.15;color:${c};flex:1;text-align:left">${esc(t)}</b><b style="font:900 28px var(--display);color:${c}" data-c="${i}">${S.mood[i] || 0}</b></button>`).join('')}</div>
       <div style="margin-top:auto;background:#F5E6C8;border-radius:18px;padding:12px 16px;font-size:18px;font-weight:700"><b style="color:var(--amber)">ҚАРАША — ӘДІЛДІК ЖӘНЕ ЖАУАПКЕРШІЛІК АЙЫ</b><br>«Әділдік пен жауапкершілік – біртұтас ұғым»</div></div></div>`;
 
   /* «Ыстық орындық» */
@@ -247,7 +247,7 @@
 
   /* ---------- Кері байланыс: «Жыр бәйтерегі» — оқушы жапырағы, қонақ пікірі алтын алма ---------- */
   const TREE = { leaf: new Set(), apple: new Set(), timer: null, ix: 0 };
-  const LEAFC = { easy: '#3BB273', mid: '#F2B33D', hard: '#F0765F' };
+  const LEAFC = { easy: '#B44A33', good: '#2F7E92', mid: '#D9962B', hard: '#5B4A8A' };
   const LEAFP = 'M0,-17 C12,-12 14,7 0,17 C-14,7 -12,-12 0,-17Z';
   const SPOTS = (() => { const a = []; for (let k = 0; k < 70; k++) { const r = Math.sqrt((k + .5) / 70), t = k * 2.39996; a.push([300 + Math.cos(t) * r * 225, 205 + Math.sin(t) * r * 150, (k * 47) % 70 - 35]); } return a; })();
   const APPLES = [[150, 260], [450, 250], [230, 120], [380, 110], [300, 70], [110, 190], [500, 180], [200, 320], [410, 330], [340, 200], [255, 215], [470, 300]];
@@ -275,13 +275,13 @@
         <div class="card" style="position:relative;padding:10px;background:radial-gradient(80% 70% at 50% 35%,#F3FBEF,#fff 70%);display:flex;align-items:center;justify-content:center;min-height:0">
           <div style="position:absolute;left:20px;top:14px;font:900 22px var(--display)">🌳 Жыр бәйтерегі · <b id="lcnt" style="font-size:1.6em;color:var(--good)">0</b> жапырақ</div>${treeSvg()}</div>
         <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${LD.feedback.map((f) => `<div class="card" style="padding:10px;text-align:center;border-top:8px solid ${LEAFC[f.k]}"><div style="font-size:34px">${f.icon}</div><b id="fc_${f.k}" style="display:block;font:900 40px var(--display);color:${LEAFC[f.k]}">0</b><div style="font:800 15px var(--body)">${esc(f.t)}</div></div>`).join('')}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${LD.feedback.map((f) => `<div class="card" style="padding:10px;text-align:center;border-top:8px solid ${LEAFC[f.k]}"><div style="font-size:34px">${f.icon}</div><b id="fc_${f.k}" style="display:block;font:900 40px var(--display);color:${LEAFC[f.k]}">0</b><div style="font:800 15px var(--body)">${esc(f.t)}</div></div>`).join('')}</div>
           <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center"><div id="tquote" style="font:800 30px/1.2 var(--display);transition:opacity .35s"><span class="mut" style="font-size:22px">Оқушылар телефоннан ойын жазғанда, жапырақ ағашқа өседі. Жапырақты бассаңыз — ойы шығады.</span></div></div>
           <div class="card" style="display:flex;gap:14px;align-items:center;padding:12px 16px;background:linear-gradient(160deg,#FFF8E8,#fff)"><div class="qrbox" style="width:130px;height:130px;flex:none">${GT.qr(link('quiz.html', '&guest=1'), 130)}</div><div style="font:700 17px var(--body)"><b style="font-family:var(--display)">🍎 Ұстаздар пікірі</b><br>Сканерлеп, «2 жұлдыз, 1 тілек» жазыңыз — ағашта алтын алма пайда болады.</div></div>
         </div></div>`;
       TREE.timer = setInterval(() => { if (!$('#tquote')) return clearInterval(TREE.timer); treeQuote(); }, 6000);
     }
-    const g = $('#leaves', box), fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, cnt = { easy: 0, mid: 0, hard: 0 }, NS = 'http://www.w3.org/2000/svg';
+    const g = $('#leaves', box), fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, cnt = { easy: 0, good: 0, mid: 0, hard: 0 }, NS = 'http://www.w3.org/2000/svg';
     Object.keys(fb).sort((a, b) => (fb[a].t || 0) - (fb[b].t || 0)).forEach((u) => {
       const f = fb[u]; if (!f || !f.k) return; cnt[f.k] = (cnt[f.k] || 0) + 1;
       if (TREE.leaf.has(u)) return; const k = TREE.leaf.size; TREE.leaf.add(u);
