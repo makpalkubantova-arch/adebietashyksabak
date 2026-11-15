@@ -54,9 +54,9 @@ h1{font:800 22px 'Montserrat',sans-serif;color:#E07A1F}
   db.on(P + '/guests/' + db.uid, (v) => { mineAlt = (v && v.items) || {}; if (v && v.items) alt = true; remix(); });
   /* хатшыға жауап кілті — тапсырманы өзі орындағаннан кейін ғана ашылады */
   function KEYOF(k, g) {
-    if (k === 'K1') return 'Өлең жолымен немесе деректен мысал келтіріп дәлелдесе — 1 ұпай. Кілттер: ' + LD.hot.map((x, i) => `${i + 1}) ${esc(x.a)}`).join(' · ');
+    if (k === 'K1') return 'Кілт: 1879 жыл (жұттан кейін), Маңғыстау, Адай елінің 9 болыс жиналған жиыны; ақсақал Мәтжан сөзді Мұратқа береді. Үшеуін айтса — 1 ұпай.';
     if (k === 'K2') return 'Сұрақ кілттері: ' + LD.stanzas.map((x, i) => `${i + 1}) ${esc(x.a)}`).join(' · ');
-    if (k === 'K3') return 'Жауаптар: ' + LD.lab.map((x, i) => `${i + 1}) ${esc(LD.devices.find((d) => d.k === x.a).n)}`).join(' · ') + '. 7–8 дұрыс — 2, 4–6 — 1 ұпай. Стиль: ' + esc(LD.style[0]) + '; ' + esc(LD.style[5]) + '.';
+    if (k === 'K3') return 'Жауаптар: ' + LD.lab.map((x, i) => `${i + 1}) ${esc(LD.devices.find((d) => d.k === x.a).n)}`).join(' · ') + '. Әр төрттік толық дұрыс болса — 1 ұпай. Стиль: ' + esc(LD.style[0]) + '; ' + esc(LD.style[5]) + '.';
     return '';
   }
 

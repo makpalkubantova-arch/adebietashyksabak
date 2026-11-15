@@ -113,7 +113,7 @@ select,input,textarea{width:100%;font:700 18px 'Nunito',sans-serif;padding:14px;
   function finish(mine) {
     const c = mine.filter((a, i) => a && GT.isRight(LD.quiz[i], a.v)).length; const k7 = LD.quizPts(c, LD.quiz.length);
     const fb = (game.feedback || {})[db.uid];
-    app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${c}/${LD.quiz.length}</div><h2>${mine.some(Boolean) ? 'Квиз аяқталды! ' + LD.quizK + ': ' + k7 + ' ұпай' : 'Кері байланыс'}</h2></div>
+    app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${c}/${LD.quiz.length}</div><h2>${mine.some(Boolean) ? 'Квиз аяқталды! Дұрыс: ' + c + '/' + LD.quiz.length : 'Кері байланыс'}</h2></div>
       <div class="card"><h2>🌳 Жыр бәйтерегі</h2><p class="mut" style="font-weight:700">Таңда да, ойыңды жаз — тақтадағы ағашқа сенің жапырағың өседі.</p>${LD.feedback.map((f) => `<button class="opt ${fb && fb.k === f.k ? 'sel' : ''}" data-f="${f.k}">${f.icon} <b>${esc(f.t)}</b><br><span class="mut" style="font-weight:600;font-size:15px">${esc(f.d)}</span></button>`).join('')}
       <textarea id="ft" rows="2" maxlength="200" placeholder="🌱 Мені ... толғандырды (міндетті емес)">${fb && fb.text ? esc(fb.text) : ''}</textarea><button class="btn" id="fs">🍃 Жапырақты ағашқа жіберу</button><p id="fm" class="mut"></p></div>`;
     let sel = fb ? fb.k : null;

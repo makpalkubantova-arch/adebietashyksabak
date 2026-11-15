@@ -7,7 +7,7 @@
   const LS = { get: (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
   const SET = Object.assign({ autoTimer: true, guideAll: false, voice: true, videoUrl: '' }, LS.get('sa_set', {}));
   const S = { i: Math.min(ST.length - 1, Math.max(0, LS.get('sa_stage', 0))), code: '', db: null, game: {}, roster: LS.get('sa_roster', []), manual: LS.get('sa_manual', {}),
-    bsc: LS.get('sa_bsc', {}), deb: LS.get('sa_deb', { mode: 'prep', r: 0, crit: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], win: '' }), lab: { sel: 0, ans: LS.get('sa_lab', {}) }, rd: { i: 0, pick: null, key: false, done: {} },
+    bsc: LS.get('sa_bsc', {}), deb: LS.get('sa_deb', { mode: 'prep', r: 0, crit: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], win: '' }), lab: { sel: 0, ans: LS.get('sa_lab', {}) }, rd: { i: 0, pick: null, key: false, done: {} },
     mood: {}, hw: { q: 0, pick: null, key: false }, grouped: false, endTab: 'rate', quizShow: true };
   if (!S.roster.length && LD.defaultRoster) { const list = GT.parseRoster(LD.defaultRoster); const out = []; LD.groups.forEach((_, gi) => GT.assignRoles(list.filter((p) => p.fixG === gi)).forEach((p) => out.push(Object.assign(p, { g: gi })))); S.roster = out; LS.set('sa_roster', out); }
   const grp = (i) => LD.groups[i] || LD.groups[0];
@@ -134,7 +134,7 @@
         <div style="font:800 16px var(--display);letter-spacing:2px;color:var(--amber);margin-top:22px">«ҮШ ҚИЯН» · СҰРАҚ</div>
         <div style="font:800 46px/1.2 var(--display);margin-top:10px;color:var(--deep)">${esc(q.q)}</div>
         <div id="ans" style="margin-top:20px;font-size:27px;font-weight:800;line-height:1.35;color:#1E7A4A;background:#E5F4EA;border-radius:18px;padding:14px 18px;display:${S.hw.key ? 'block' : 'none'}">✓ ${esc(q.a)}</div>
-        <div style="margin-top:auto;display:flex;gap:12px;align-items:center"><button class="btn sec" id="ansB">🔑 Жауапты ашу</button><button class="btn green" id="okB" ${p && !p.anon ? '' : 'disabled'}>✓ Мазмұнын айтты +1</button><span style="flex:1"></span><span class="chip">📒 Дәлел ұпайын — хатшы (K1)</span></div></div></div></div>`; };
+        <div style="margin-top:auto;display:flex;gap:12px;align-items:center"><button class="btn sec" id="ansB">🔑 Жауапты ашу</button><button class="btn green" id="okB" ${p ? '' : 'disabled'}>👏 Жарайсың!</button><span style="flex:1"></span><span class="chip">🔮 Болжам: ақын неге «Сарыарқа» деп атады?</span></div></div></div></div>`; };
 
   R.groups = () => {
     if (!S.roster.length) return `<div class="card oyu" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center"><div style="font-size:90px">🐎</div><h2 style="font-size:36px">Оқушылар тізімі әлі енгізілмеген</h2><div class="mut" style="font-size:24px">⚙️ Баптау → «Тізім» бөліміне аты-жөнін деңгейімен (A/B/C) енгізіңіз — бір рет қана</div><button class="btn" id="goSet">⚙️ Тізімді енгізу</button></div>`;
@@ -189,7 +189,7 @@
   /* Топтық дебат */
   R.debate = () => {
     const D = LD.debate, d = S.deb;
-    const crit = (gi) => `<div style="display:flex;flex-direction:column;gap:6px">${task('K4').d.map((x, i) => `<button class="dcrit" data-g="${gi}" data-i="${i}" title="${esc(x.t)}" style="display:flex;gap:8px;align-items:center;text-align:left;border:2px solid ${d.crit[gi][i] ? '#2E8B57' : 'rgba(0,0,0,.12)'};background:${d.crit[gi][i] ? '#E2F3E8' : '#fff'};border-radius:12px;padding:6px 10px;font:800 15px/1.2 var(--body);cursor:pointer;color:var(--ink)"><span style="font-size:22px">${d.crit[gi][i] ? '✅' : '⬜'}</span>${esc(['Идея мен пафос', 'Дәлел: жол + дерек', 'Сұрақ-жауап'][i])}</button>`).join('')}</div>`;
+    const crit = (gi) => `<div style="display:flex;flex-direction:column;gap:6px">${task('K4').d.map((x, i) => `<button class="dcrit" data-g="${gi}" data-i="${i}" title="${esc(x.t)}" style="display:flex;gap:8px;align-items:center;text-align:left;border:2px solid ${d.crit[gi][i] ? '#2E8B57' : 'rgba(0,0,0,.12)'};background:${d.crit[gi][i] ? '#E2F3E8' : '#fff'};border-radius:12px;padding:6px 10px;font:800 15px/1.2 var(--body);cursor:pointer;color:var(--ink)"><span style="font-size:22px">${d.crit[gi][i] ? '✅' : '⬜'}</span>${esc(['Идея: ұлттық мүдде', 'Пафос', 'Дәлел: жол + дерек', 'Сұрақ-жауап'][i])}</button>`).join('')}</div>`;
     const head = `<div class="card dark oyu" style="padding:14px 24px;display:flex;align-items:center;gap:18px;background:linear-gradient(90deg,#3B2414,#6B3A1E)"><span style="font-size:46px">⚖️</span><div style="flex:1"><div style="font:800 15px var(--display);letter-spacing:2px;color:#F7B24A">ДЕБАТ ТАҚЫРЫБЫ</div><div style="font:900 40px var(--display);color:#fff">«${esc(D.motion)}»</div><div style="font-size:16px;opacity:.85">${esc(D.book)}</div></div>
       <div style="display:flex;gap:8px"><button class="btn ${d.mode === 'prep' ? '' : 'sec'}" id="dPrep">🛠 Дайындық</button><button class="btn ${d.mode === 'run' ? '' : 'sec'}" id="dRun">🗣 Дебат</button></div></div>`;
     if (d.mode === 'prep') return `<div style="display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);gap:12px;height:100%">${head}
@@ -210,7 +210,7 @@
           <span id="mini" style="position:relative;margin-top:-150px;margin-bottom:96px;font:900 46px var(--display);font-variant-numeric:tabular-nums">${fmt(r.s)}</span>
           <div style="position:relative;display:flex;gap:10px"><button class="btn sec" id="dPrevR" ${d.r ? '' : 'disabled'}>◀</button><button class="btn" id="dGo">▶ Бастау</button><button class="btn" id="dNextR">${d.r < D.rounds.length - 1 ? 'Келесі кезең ▶' : '✓ Аяқтау'}</button></div></div>
         <div class="card" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow:hidden"><div style="font:800 15px var(--display);letter-spacing:1.5px;color:var(--amber)">K4 · МҰҒАЛІМ БАСАДЫ → БҮКІЛ ТОПҚА</div>
-          ${LD.groups.map((g, gi) => `<div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;border-left:6px solid ${g.c};padding-left:8px"><div style="font:800 17px var(--display);color:${g.ink}">${g.icon} ${esc(g.name.replace(/[«»]| тобы/g, ''))}<br><b style="font:900 24px var(--display)">+${d.crit[gi].reduce((a, b) => a + b, 0)}</b></div>${crit(gi)}</div>`).join('')}
+          ${LD.groups.map((g, gi) => `<div style="display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;border-left:6px solid ${g.c};padding-left:8px"><div style="font:800 17px var(--display);color:${g.ink}">${g.icon} ${esc(g.name.replace(/[«»]| тобы/g, ''))}<br><b style="font:900 24px var(--display)">+${(d.crit[gi] || []).reduce((a, b) => a + (b || 0), 0)}</b></div>${crit(gi)}</div>`).join('')}
           <div style="margin-top:auto;display:flex;gap:6px">${[['yes', '🏔️ «Иә» жеңді'], ['no', '🐎 «Қарсы» жеңді'], ['tie', '🤝 Тең']].map(([k, t]) => `<button class="btn ${d.win === k ? '' : 'sec'} dwin" data-k="${k}" style="flex:1;padding:10px 6px;font-size:15px">${t}</button>`).join('')}</div></div></div></div>`;
   };
 
@@ -370,7 +370,7 @@
     $$('.hq').forEach((b) => b.onclick = () => { S.hw.q = +b.dataset.i; S.hw.key = false; redraw(); });
     $('#spin').onclick = () => doSpin($('#pick'), (p) => { S.hw.pick = p; S.hw.key = false; });
     $('#ansB').onclick = () => { S.hw.key = !S.hw.key; $('#ans').style.display = S.hw.key ? 'block' : 'none'; };
-    const ok = $('#okB'); if (ok) ok.onclick = () => { const p = S.hw.pick; if (!p || p.anon) return; bScore(p, 'K1_0', 1); GT.chime(); ok.disabled = true; banner('🔥 ' + p.name + ': +1 (K1)'); };
+    const ok = $('#okB'); if (ok) ok.onclick = () => { const p = S.hw.pick; if (!p) return; GT.chime(); banner('👏 ' + p.name + ' — Жарайсың! Good job!'); };
   }
   function bindRead() {
     const go = (i) => { S.rd.i = Math.max(0, Math.min(LD.stanzas.length - 1, i)); S.rd.key = false; redraw(); };
@@ -398,7 +398,7 @@
     $('#dPrevR').onclick = () => go(d.r - 1);
     $('#dGo').onclick = () => miniStart(D.rounds[d.r].s, () => banner('⏰ ' + D.rounds[d.r].t + ': уақыт бітті'));
     $('#dNextR').onclick = () => { if (d.r < D.rounds.length - 1) { go(d.r + 1); miniStart(D.rounds[d.r].s, () => banner('⏰ Уақыт бітті')); } else { MT.run = false; banner('⚖️ Дебат аяқталды · ұпай топтарға түсті', 5000); } };
-    $$('.dcrit').forEach((b) => b.onclick = () => { const g = +b.dataset.g, i = +b.dataset.i; d.crit[g][i] = d.crit[g][i] ? 0 : 1; if (d.crit[g][i]) GT.chime(); save(); const keep = MT.run; redraw(); MT.run = keep; live(); });
+    $$('.dcrit').forEach((b) => b.onclick = () => { const g = +b.dataset.g, i = +b.dataset.i; d.crit[g] = d.crit[g] || []; d.crit[g][i] = d.crit[g][i] ? 0 : 1; if (d.crit[g][i]) GT.chime(); save(); const keep = MT.run; redraw(); MT.run = keep; live(); });
     $$('.dwin').forEach((b) => b.onclick = () => { d.win = d.win === b.dataset.k ? '' : b.dataset.k; save(); if (d.win) { GT.melody(); banner({ yes: '🏔️ Қазылар шешімі: «Иә» тарап жеңді!', no: '🐎 Қазылар шешімі: «Қарсы» тарап жеңді!', tie: '🤝 Қазылар шешімі: тең түсті!' }[d.win], 5000); } const keep = MT.run; redraw(); MT.run = keep; });
   }
 
@@ -488,9 +488,9 @@
     f.innerHTML = h;
     $$('.tabs button', f).forEach((b) => b.onclick = () => { OV.tab = b.dataset.t; renderSet(); });
     if (tab === 'list') { const doBal = (sh) => { let list = GT.parseRoster($('#rost').value); if (!list.length) return banner('Тізім бос'); if (sh) list = list.map((p) => [Math.random(), p]).sort((a, b) => a[0] - b[0]).map((x) => x[1]); const out = []; const fixed = list.length && list.every((p) => p.fixG != null && p.fixG < LD.groups.length); const parts = fixed && !sh ? LD.groups.map((_, gi) => list.filter((p) => p.fixG === gi)) : GT.balance(list, LD.groups.length); if (fixed && !sh) banner('📌 Топтар тізімдегі нөмір бойынша сақталды'); parts.forEach((m, gi) => GT.assignRoles(m).forEach((p) => out.push(Object.assign(p, { g: gi })))); S.roster = out; LS.set('sa_roster', out); S.grouped = false; pushRoster(); renderSet(); if (['groups', 'debate'].includes(cur().id)) redraw(); live(); }; $('#bal').onclick = () => doBal(false); $('#rebal').onclick = () => doBal(true); }
-    if (tab === 'links') $('#newc').onclick = async () => { if (!confirm('Жаңа код жасалады, ағымдағы ұпайлар көрінбейді. Жалғастырасыз ба?')) return; LS.set('sa_code', ''); S.bsc = {}; S.manual = {}; S.deb = { mode: 'prep', r: 0, crit: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], win: '' }; S.lab.ans = {}; ['sa_bsc', 'sa_manual', 'sa_lab'].forEach((k) => LS.set(k, {})); LS.set('sa_deb', S.deb); await connect(true); renderSet(); live(); };
+    if (tab === 'links') $('#newc').onclick = async () => { if (!confirm('Жаңа код жасалады, ағымдағы ұпайлар көрінбейді. Жалғастырасыз ба?')) return; LS.set('sa_code', ''); S.bsc = {}; S.manual = {}; S.deb = { mode: 'prep', r: 0, crit: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], win: '' }; S.lab.ans = {}; ['sa_bsc', 'sa_manual', 'sa_lab'].forEach((k) => LS.set(k, {})); LS.set('sa_deb', S.deb); await connect(true); renderSet(); live(); };
     if (tab === 'opt') { const sv = () => LS.set('sa_set', SET); $('#oAuto').onchange = (e) => { SET.autoTimer = e.target.checked; sv(); }; $('#oGuide').onchange = (e) => { SET.guideAll = e.target.checked; sv(); }; $('#oVideo').onchange = (e) => { SET.videoUrl = e.target.value.trim(); sv(); if (cur().id === 'video') redraw(); };
-      $('#oReset').onclick = () => { if (!confirm('Тақтадағы ұпайлар (K1, K2, K3, K4) өшеді. Жалғастырасыз ба?')) return; S.bsc = {}; S.deb = { mode: 'prep', r: 0, crit: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], win: '' }; S.lab.ans = {}; LS.set('sa_bsc', {}); LS.set('sa_deb', S.deb); LS.set('sa_lab', {}); live(); banner('🧹 Тазаланды'); }; }
+      $('#oReset').onclick = () => { if (!confirm('Тақтадағы ұпайлар (K1, K2, K3, K4) өшеді. Жалғастырасыз ба?')) return; S.bsc = {}; S.deb = { mode: 'prep', r: 0, crit: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], win: '' }; S.lab.ans = {}; LS.set('sa_bsc', {}); LS.set('sa_deb', S.deb); LS.set('sa_lab', {}); live(); banner('🧹 Тазаланды'); }; }
   }
   function pushRoster() { if (S.db && S.code) setMeta({ roster: S.roster.map((p) => ({ name: p.name, g: p.g, role: p.role || '' })) }); }
 
