@@ -9,7 +9,10 @@
   const S = { i: Math.min(ST.length - 1, Math.max(0, LS.get('sa_stage', 0))), code: '', db: null, game: {}, roster: LS.get('sa_roster', []), manual: LS.get('sa_manual', {}),
     bsc: LS.get('sa_bsc', {}), deb: LS.get('sa_deb', { mode: 'prep', r: 0, crit: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], win: '' }), lab: { sel: 0, ans: LS.get('sa_lab', {}) }, rd: { i: 0, pick: null, key: false, done: {} },
     mood: {}, hw: { q: 0, pick: null, key: false }, grouped: false, endTab: 'rate', quizShow: true };
-  if (!S.roster.length && LD.defaultRoster) { const list = GT.parseRoster(LD.defaultRoster); const out = []; LD.groups.forEach((_, gi) => GT.assignRoles(list.filter((p) => p.fixG === gi)).forEach((p) => out.push(Object.assign(p, { g: gi })))); S.roster = out; LS.set('sa_roster', out); }
+  if (LD.defaultRoster && LS.get('sa_rosterV', '') !== LD.defaultRoster) { S.roster = []; LS.set('sa_rosterV', LD.defaultRoster); }
+  if (!S.roster.length && LD.defaultRoster) { const list = GT.parseRoster(LD.defaultRoster); const out = []; const hasG = list.some((p) => p.fixG != null);
+    const parts = hasG ? LD.groups.map((_, gi) => list.filter((p) => p.fixG === gi)) : GT.balance(list, LD.groups.length);
+    parts.forEach((m, gi) => GT.assignRoles(m).forEach((p) => out.push(Object.assign(p, { g: gi })))); S.roster = out; LS.set('sa_roster', out); }
   const grp = (i) => LD.groups[i] || LD.groups[0];
   const role = (k) => LD.roles.find((r) => r.key === k);
   const task = (k) => LD.tasks.find((t) => t.k === k);
@@ -252,7 +255,51 @@
   const SPOTS = (() => { const a = []; for (let k = 0; k < 70; k++) { const r = Math.sqrt((k + .5) / 70), t = k * 2.39996; a.push([300 + Math.cos(t) * r * 172, 292 - Math.abs(Math.sin(t)) * r * 104, (k * 47) % 50 - 25]); } return a; })();
   const APPLES = [[300, 176], [232, 196], [368, 196], [176, 232], [424, 232], [70, 520], [530, 522], [118, 538], [486, 540], [266, 214], [334, 214], [300, 236]];
   function treeSvg() {
-    return '<svg viewBox="0 0 600 560" role="img" aria-label="Асыл сөз сандығы" style="width:100%;height:100%;display:block"><defs><linearGradient id="wood" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#A9652F"/><stop offset="1" stop-color="#6B3A1E"/></linearGradient><linearGradient id="lid" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7E2C1C"/><stop offset="1" stop-color="#B44A33"/></linearGradient><linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#C98A0B"/><stop offset=".5" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></linearGradient><radialGradient id="gold" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient><radialGradient id="glow" cx="50%" cy="60%" r="60%"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".95"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/></radialGradient><path id="muiz" d="M0,14 C0,2 -10,-2 -16,4 C-22,10 -16,20 -8,16 M0,14 C0,2 10,-2 16,4 C22,10 16,20 8,16 M0,14 L0,26" fill="none" stroke="#F6C343" stroke-width="4" stroke-linecap="round"/></defs><ellipse cx="300" cy="528" rx="262" ry="22" fill="#E9DCC3"/><ellipse cx="300" cy="230" rx="270" ry="190" fill="url(#glow)"/><path d="M112 250 L132 66 Q134 46 154 46 L446 46 Q466 46 468 66 L488 250 Z" fill="url(#lid)" stroke="#5A2012" stroke-width="5"/><path d="M140 232 L156 78 Q157 68 167 68 L433 68 Q443 68 444 78 L460 232 Z" fill="none" stroke="#F6C343" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/><use href="#muiz" transform="translate(300,104) scale(1.7)"/><use href="#muiz" transform="translate(206,128) scale(1.1)" opacity=".8"/><use href="#muiz" transform="translate(394,128) scale(1.1)" opacity=".8"/><path d="M112 250 L488 250 L522 312 L78 312 Z" fill="#3B2414"/><path d="M112 250 L488 250 L500 272 L100 272 Z" fill="#000" opacity=".25"/><g id="leaves"></g><path d="M70 304 H530 V486 Q530 508 508 508 H92 Q70 508 70 486 Z" fill="url(#wood)" stroke="#4A2812" stroke-width="5"/><rect x="70" y="304" width="460" height="22" fill="url(#brass)" stroke="#8A5A0A" stroke-width="2"/><rect x="70" y="470" width="460" height="16" fill="url(#brass)" opacity=".9"/><rect x="128" y="304" width="26" height="204" fill="url(#brass)" opacity=".92"/><rect x="446" y="304" width="26" height="204" fill="url(#brass)" opacity=".92"/><g fill="#8A5A0A"><circle cx="141" cy="350" r="4"/><circle cx="141" cy="400" r="4"/><circle cx="141" cy="450" r="4"/><circle cx="459" cy="350" r="4"/><circle cx="459" cy="400" r="4"/><circle cx="459" cy="450" r="4"/></g><use href="#muiz" transform="translate(222,372) scale(1.5)"/><use href="#muiz" transform="translate(378,372) scale(1.5)"/><path d="M176 452 q14 -14 28 0 t28 0 t28 0 M340 452 q14 -14 28 0 t28 0 t28 0" fill="none" stroke="#F6C343" stroke-width="3.5" stroke-linecap="round" opacity=".85"/><rect x="276" y="318" width="48" height="62" rx="10" fill="url(#brass)" stroke="#8A5A0A" stroke-width="3"/><circle cx="300" cy="342" r="7" fill="#4A2812"/><path d="M296 344 L304 344 L302 364 L298 364 Z" fill="#4A2812"/></svg>';
+    /* Заманауи сандық: лак жылтыры, алтын қошқар мүйіз, ашық қақпақтан шыққан жарық */
+    const M = 'M0,22 L0,6 C0,-4 -5,-11 -13,-11 C-21,-11 -25,-4 -23,2 C-21,8 -13,8 -12,2 C-11,-2 -15,-3 -16,0 M0,6 C0,-4 5,-11 13,-11 C21,-11 25,-4 23,2 C21,8 13,8 12,2 C11,-2 15,-3 16,0';
+    const rays = [...Array(14)].map((_, k) => `<path d="M300 300 L${300 + Math.cos(Math.PI + k * Math.PI / 13) * 330} ${300 + Math.sin(Math.PI + k * Math.PI / 13) * 330} L${300 + Math.cos(Math.PI + (k + .45) * Math.PI / 13) * 330} ${300 + Math.sin(Math.PI + (k + .45) * Math.PI / 13) * 330}Z" fill="url(#ray)"/>`).join('');
+    return `<svg viewBox="0 0 600 560" role="img" aria-label="Асыл сөз сандығы" style="width:100%;height:100%;display:block"><defs>
+      <linearGradient id="lac" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C2412A"/><stop offset=".55" stop-color="#8E2416"/><stop offset="1" stop-color="#5E140B"/></linearGradient>
+      <linearGradient id="lacL" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4E1009"/><stop offset="1" stop-color="#9C2B19"/></linearGradient>
+      <linearGradient id="shine" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#B07A0E"/><stop offset=".3" stop-color="#FFE08A"/><stop offset=".55" stop-color="#E2A92A"/><stop offset="1" stop-color="#9A6608"/></linearGradient>
+      <linearGradient id="brassV" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#FFE7A0"/><stop offset=".5" stop-color="#E2A92A"/><stop offset="1" stop-color="#8E5C06"/></linearGradient>
+      <radialGradient id="gold" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF6CC"/><stop offset=".55" stop-color="#F6C343"/><stop offset="1" stop-color="#C98A0B"/></radialGradient>
+      <radialGradient id="inner" cx="50%" cy="100%" r="90%"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".45" stop-color="#C97A1C"/><stop offset="1" stop-color="#2A0E06"/></radialGradient>
+      <radialGradient id="glow" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#FFE3A0" stop-opacity=".9"/><stop offset="1" stop-color="#FFE3A0" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ray" x1="0" x2="1"><stop offset="0" stop-color="#FFD978" stop-opacity=".55"/><stop offset="1" stop-color="#FFD978" stop-opacity="0"/></linearGradient>
+      <path id="muiz" d="${M}" fill="none" stroke="url(#brassV)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="10"/></filter></defs>
+      <ellipse cx="300" cy="528" rx="250" ry="20" fill="#3B1A0C" opacity=".22" filter="url(#soft)"/>
+      <g class="sq-rays" style="transform-origin:300px 300px">${rays}</g>
+      <ellipse cx="300" cy="250" rx="250" ry="170" fill="url(#glow)"/>
+      <!-- қақпақ (ашық, артқа шалқайған) -->
+      <path d="M118 262 C118 150 150 70 176 56 L424 56 C450 70 482 150 482 262 Z" fill="url(#lacL)" stroke="#3A0B05" stroke-width="3"/>
+      <path d="M138 252 C140 160 166 90 186 78 L414 78 C434 90 460 160 462 252" fill="none" stroke="url(#brass)" stroke-width="5"/>
+      <path d="M160 238 C164 168 184 112 200 100 L400 100 C416 112 436 168 440 238" fill="none" stroke="#F6C343" stroke-width="1.6" stroke-dasharray="1 7" stroke-linecap="round" opacity=".8"/>
+      <use href="#muiz" transform="translate(300,140) scale(2.1)"/><use href="#muiz" transform="translate(212,186) scale(1.2)" opacity=".85"/><use href="#muiz" transform="translate(388,186) scale(1.2)" opacity=".85"/>
+      <path d="M118 262 C118 150 150 70 176 56 L230 56 C190 90 168 160 166 262Z" fill="url(#shine)"/>
+      <!-- ішкі жарық -->
+      <path d="M96 262 L504 262 L522 312 L78 312 Z" fill="url(#inner)"/>
+      <g id="leaves"></g>
+      <!-- корпус -->
+      <rect x="62" y="300" width="476" height="196" rx="22" fill="url(#lac)" stroke="#3A0B05" stroke-width="3"/>
+      <rect x="62" y="300" width="476" height="70" rx="22" fill="url(#shine)"/>
+      <rect x="58" y="296" width="484" height="20" rx="10" fill="url(#brass)" stroke="#7A4C05" stroke-width="1.5"/>
+      <rect x="62" y="470" width="476" height="12" rx="6" fill="url(#brass)" opacity=".95"/>
+      <rect x="96" y="332" width="168" height="126" rx="16" fill="none" stroke="url(#brass)" stroke-width="3"/><rect x="336" y="332" width="168" height="126" rx="16" fill="none" stroke="url(#brass)" stroke-width="3"/>
+      <rect x="106" y="342" width="148" height="106" rx="11" fill="#5E140B" opacity=".35"/><rect x="346" y="342" width="148" height="106" rx="11" fill="#5E140B" opacity=".35"/>
+      <use href="#muiz" transform="translate(180,388) scale(1.75)"/><use href="#muiz" transform="translate(420,388) scale(1.75)"/>
+      <path d="M118 440 q12 -12 24 0 t24 0 t24 0 t24 0 t24 0 M358 440 q12 -12 24 0 t24 0 t24 0 t24 0 t24 0" fill="none" stroke="#F6C343" stroke-width="2.4" stroke-linecap="round" opacity=".75"/>
+      <!-- бұрыш қаптамалары, тұтқалар, аяқтар -->
+      <g fill="url(#brassV)" stroke="#7A4C05" stroke-width="1.2"><path d="M62 330 V318 Q62 300 80 300 H96 V312 H80 Q74 312 74 318 V330Z"/><path d="M538 330 V318 Q538 300 520 300 H504 V312 H520 Q526 312 526 318 V330Z"/>
+        <path d="M62 466 V478 Q62 496 80 496 H96 V484 H80 Q74 484 74 478 V466Z"/><path d="M538 466 V478 Q538 496 520 496 H504 V484 H520 Q526 484 526 478 V466Z"/>
+        <rect x="78" y="494" width="40" height="18" rx="6"/><rect x="482" y="494" width="40" height="18" rx="6"/></g>
+      <path d="M62 360 q-20 0 -20 22 t20 22" fill="none" stroke="url(#brass)" stroke-width="6" stroke-linecap="round"/><path d="M538 360 q20 0 20 22 t-20 22" fill="none" stroke="url(#brass)" stroke-width="6" stroke-linecap="round"/>
+      <!-- құлып -->
+      <g transform="translate(300 352)"><path d="M-30 -30 H30 V14 Q30 38 0 46 Q-30 38 -30 14Z" fill="url(#brassV)" stroke="#7A4C05" stroke-width="2"/><path d="M-22 -22 H22 V12 Q22 30 0 37 Q-22 30 -22 12Z" fill="none" stroke="#FFF1B8" stroke-width="1.2" opacity=".8"/>
+        <circle cy="2" r="7" fill="#3A1406"/><path d="M-3.5 4 H3.5 L2 20 H-2Z" fill="#3A1406"/></g>
+      <circle cx="300" cy="300" r="4" fill="#fff" opacity=".9"><animate attributeName="opacity" values=".2;1;.2" dur="2.4s" repeatCount="indefinite"/></circle></svg>`;
   }
   function treeNotes() {
     const fb = (S.game || {}).feedback || {}, gs = (S.game || {}).guests || {}, n = [];
